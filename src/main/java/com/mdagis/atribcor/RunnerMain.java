@@ -13,17 +13,18 @@ public class RunnerMain {
 
         CorrelationFinder cor = new CorrelationFinder();
 
-        cor.populateMap();
+        cor.populateScoreMap();
         cor.setBooleanCalculation(true);
         cor.findCorrelation();
-        for (int i = 0; i < 10; i++){
-            System.out.println("---- Printing results for " + String.valueOf(i) + "  ------- ");
-            cor.printColResult(i);
-            System.out.println("");
-            System.out.println("------------------------------------ ");
-        }
-        
-        
+        cor.populateResultMap();
+        cor.printAllVariablesReport();
+
+//        for (int i = 0; i < 10; i++){
+//            System.out.println("---- Printing results for " + String.valueOf(i) + "  ------- ");
+//            cor.printColResult(i);
+//            System.out.println("");
+//            System.out.println("------------------------------------ ");
+//        }
     }
 
 }

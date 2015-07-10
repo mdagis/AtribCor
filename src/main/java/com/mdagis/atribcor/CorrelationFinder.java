@@ -38,10 +38,16 @@ public class CorrelationFinder {
     private HashMap<Coord, Double> scoreMap;
 
     /**
+     * This map will hold the results for printing
+     *
+     */
+    private HashMap<Integer, VariableResult> resultMap;
+
+    /**
      * the method will fill the scoreMap with all available keys based on multi
      * array
      */
-    public void populateMap() {
+    public void populateScoreMap() {
 
         scoreMap = new HashMap<>();
 
@@ -87,6 +93,47 @@ public class CorrelationFinder {
                 }
                 scoreMap.put(coord, val);
             }
+        }
+    }
+
+    public void populateResultMap() {
+
+        resultMap = new HashMap<>();
+        for (Integer[] ar1 : multi) {
+            for (int j = 0; j < ar1.length; j++) {
+
+                if (!resultMap.containsKey(j)) {
+                    VariableResult result = new VariableResult(0.0);
+                    resultMap.put(j, result);
+                }
+
+                if (ar1[j] > 0) {
+                    double currentValue = resultMap.get(j).getOccurrences();
+                    currentValue = this.booleanCalculation ? currentValue + 1 : currentValue + ar1[j];
+                    resultMap.get(j).setOccurrences(currentValue);
+                }
+
+            }
+        }
+
+        for (int i = 0; i < multi[0].length; i++) {
+            Map<Integer, Double> lineScoreMap = calculateColScore(i);
+            resultMap.get(i).setLineScore(lineScoreMap);
+        }
+    }
+
+    public void printAllVariablesReport() {
+
+        Map<Integer, Double> lineScoreMap;
+        for (Integer k : resultMap.keySet()) {
+
+            lineScoreMap = resultMap.get(k).getLineScore();
+            lineScoreMap = CorrelationFinder.sortByValue(lineScoreMap);
+
+            for (Integer i : lineScoreMap.keySet()) {
+                System.out.println(String.valueOf(i) + " Score ---> " + String.valueOf(lineScoreMap.get(i)) + " Percentage ---> " + 100 * lineScoreMap.get(i) / resultMap.get(k).getOccurrences() + "%");
+            }
+
         }
     }
 
