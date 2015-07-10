@@ -16,8 +16,14 @@ import java.util.TreeMap;
  */
 public class CorrelationFinder {
 
+    /**
+     * This flag indicates if the calculation will handle data as boolean values
+     */
     private boolean booleanCalculation;
 
+    /**
+     * This is the array that we will try to calculate the corelations
+     */
     private final Integer[][] multi = new Integer[][]{
         {0, 0, 1, 0, 1, 0, 1, 0, 0, 0},
         {0, 1, 1, 0, 0, 0, 1, 0, 0, 0},
@@ -26,8 +32,15 @@ public class CorrelationFinder {
         {0, 0, 1, 0, 0, 0, 1, 0, 0, 0}
     };
 
+    /**
+     * This Map will hold the scoring of each variable corelation
+     */
     private HashMap<Coord, Double> scoreMap;
 
+    /**
+     * the method will fill the scoreMap with all available keys based on multi
+     * array
+     */
     public void populateMap() {
 
         scoreMap = new HashMap<>();
@@ -44,6 +57,9 @@ public class CorrelationFinder {
 
     }
 
+    /**
+     * Loops the 2D array to create score
+     */
     public void findCorrelation() {
 
         for (Integer[] multi1 : multi) {
@@ -51,6 +67,11 @@ public class CorrelationFinder {
         }
     }
 
+    /**
+     * Calculates the score per line and updates global score
+     *
+     * @param line
+     */
     private void scoreArray(Integer[] line) {
 
         Double val;
@@ -69,10 +90,15 @@ public class CorrelationFinder {
         }
     }
 
+    /**
+     * Print to output the scoring result
+     *
+     * @param col
+     */
     public void printColResult(Integer col) {
 
         Map<Integer, Double> lineScoreMap = calculateColScore(col);
-        
+
         lineScoreMap = CorrelationFinder.sortByValue(lineScoreMap);
 
         for (Integer i : lineScoreMap.keySet()) {
@@ -81,6 +107,12 @@ public class CorrelationFinder {
 
     }
 
+    /**
+     * Calculates a variable scoring for every other variable
+     *
+     * @param col
+     * @return
+     */
     private Map<Integer, Double> calculateColScore(Integer col) {
 
         Map<Integer, Double> lineScoreMap = new TreeMap<>();
