@@ -1,14 +1,10 @@
 package com.mdagis.atribcor;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 
 /**
  *
@@ -22,9 +18,9 @@ public class CorrelationFinder {
     private boolean booleanCalculation;
 
     /**
-     * This is the array that we will try to calculate the corelations
+     * This is the array that we will try to calculate the correlations
      */
-    private final Integer[][] multi = new Integer[][]{
+    private final double[][] multi = new double[][]{
         {0, 0, 1, 0, 1, 0, 1, 0, 0, 0},
         {0, 1, 1, 0, 0, 0, 1, 0, 0, 0},
         {1, 1, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -68,7 +64,7 @@ public class CorrelationFinder {
      */
     public void findCorrelation() {
 
-        for (Integer[] multi1 : multi) {
+        for (double[] multi1 : multi) {
             scoreArray(multi1);
         }
     }
@@ -78,7 +74,7 @@ public class CorrelationFinder {
      *
      * @param line
      */
-    private void scoreArray(Integer[] line) {
+    private void scoreArray(double[] line) {
 
         Double val;
         val = 0.0;
@@ -99,7 +95,7 @@ public class CorrelationFinder {
     public void populateResultMap() {
 
         resultMap = new HashMap<>();
-        for (Integer[] ar1 : multi) {
+        for (double[] ar1 : multi) {
             for (int j = 0; j < ar1.length; j++) {
 
                 if (!resultMap.containsKey(j)) {
@@ -128,30 +124,13 @@ public class CorrelationFinder {
         for (Integer k : resultMap.keySet()) {
 
             lineScoreMap = resultMap.get(k).getLineScore();
-            lineScoreMap = CorrelationFinder.sortByValue(lineScoreMap);
+            lineScoreMap = CollectionsUtil.sortByValue(lineScoreMap);
 
             for (Integer i : lineScoreMap.keySet()) {
                 System.out.println(String.valueOf(i) + " Score ---> " + String.valueOf(lineScoreMap.get(i)) + " Percentage ---> " + 100 * lineScoreMap.get(i) / resultMap.get(k).getOccurrences() + "%");
             }
 
         }
-    }
-
-    /**
-     * Print to output the scoring result
-     *
-     * @param col
-     */
-    public void printColResult(Integer col) {
-
-        Map<Integer, Double> lineScoreMap = calculateColScore(col);
-
-        lineScoreMap = CorrelationFinder.sortByValue(lineScoreMap);
-
-        for (Integer i : lineScoreMap.keySet()) {
-            System.out.println(String.valueOf(i) + " ---> " + String.valueOf(lineScoreMap.get(i)));
-        }
-
     }
 
     /**
@@ -172,22 +151,15 @@ public class CorrelationFinder {
 
         return lineScoreMap;
     }
-
-    static Map sortByValue(Map map) {
-        List list = new LinkedList(map.entrySet());
-        Collections.sort(list, new Comparator() {
-            public int compare(Object o1, Object o2) {
-                return ((Comparable) ((Map.Entry) (o2)).getValue())
-                        .compareTo(((Map.Entry) (o1)).getValue());
-            }
-        });
-
-        Map result = new LinkedHashMap();
-        for (Iterator it = list.iterator(); it.hasNext();) {
-            Map.Entry entry = (Map.Entry) it.next();
-            result.put(entry.getKey(), entry.getValue());
-        }
-        return result;
+    
+    
+    public void createPearsonsCorrelation(){
+        
+        PearsonsCorrelation corr = new PearsonsCorrelation(multi);
+        RealMatrix matrix = corr.getCorrelationMatrix();
+        System.out.println(matrix.toString());
+        
+//double result = corr.correlation(x, y);
     }
 
     public boolean isBooleanCalculation() {
